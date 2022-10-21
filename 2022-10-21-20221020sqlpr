@@ -1,0 +1,38 @@
+-- 흉부외과 또는 일반외과 의사 목록 출력하기
+SELECT dr_name, dr_id, mcdp_cd, date_format(hire_ymd,'%Y-%m-%d')
+from doctor
+where mcdp_cd = "cs" or mcdp_cd = "gs"
+order by hire_ymd desc, dr_name asc;
+
+-- 12세 이하인 여자 환자 목록 출력하기
+SELECT pt_name, pt_no, gend_cd, age, IFNULL(tlno, "NONE")
+from  patient
+where  age <=12 and gend_cd = "W"
+order by age desc, pt_no asc
+
+-- 이름이 있는 동물의 아이디
+SELECT animal_id
+from animal_ins
+where name is not null
+order by 1;
+
+-- 가장 비싼 상품 구하기
+SELECT max(price) as 'max_price'
+from product 
+
+-- 조건에 맞는 회원수 구하기
+SELECT count(*)
+from USER_INFO
+where age >= 20 and age <= 29 and SUBSTRING(joined, 1, 4) like '2021'
+
+-- 경기도에 위치한 식품창고 목록 출력하기
+SELECT WAREHOUSE_ID, WAREHOUSE_NAME, ADDRESS, IFNULL(FREEZER_YN, "N") as 'FREEZER_YN'
+from FOOD_WAREHOUSE 
+where address like '%경기도%'
+order by WAREHOUSE_ID asc;
+
+-- 강원도에 위치한 생산공장 목록 출력하기
+SELECT FACTORY_ID, FACTORY_NAME, ADDRESS
+from FOOD_FACTORY 
+where ADDRESS like '%강원도%'
+order by FACTORY_ID asc;
