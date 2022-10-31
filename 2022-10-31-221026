@@ -1,0 +1,33 @@
+-- 5월 식품들의 총매출 조회하기
+SELECT a.product_id, a.product_name, sum(a.price*b.amount) as 'TOTAL_SALES'
+from FOOD_PRODUCT a, FOOD_ORDER  b 
+where a.product_id = b.product_id and substr(b.PRODUCE_DATE, 1, 7) like '2022-05'
+group by a.product_id
+order by TOTAL_SALES desc, a.product_id asc
+
+--식품분류별 가장 비싼 식품의 정보 조회하기
+SELECT a.CATEGORY, a.price, a.PRODUCT_NAME 
+from FOOD_PRODUCT a, (select category, max(price) as'max_price' from FOOD_PRODUCT group by category having category in ('과자', '국', '김치', '식용유')) b
+where a.price = b.max_price and a.category = b.category
+order by price desc;
+ 
+
+-- 서울에 위치한 식당 목록 출력하기
+SELECT a.rest_id, a.rest_name, a.food_type, a.FAVORITES, a.ADDRESS, round(avg(b.REVIEW_SCORE), 2) SCORE
+from rest_info a, REST_REVIEW b
+where a.address like '서울%' and a.rest_id = b.rest_id
+group by a.rest_id
+order by score desc, favorites desc
+
+
+-- 오프라인/온라인 판매 데이터 통합하기
+SELECT substr(SALES_DATE,1, 10) sales_date, PRODUCT_ID, USER_ID, SALES_AMOUNT
+FROM ONLINE_SALE  
+where substr(SALES_DATE,1,7) like '2022-03'
+UNION all
+SELECT substr(SALES_DATE,1, 10) sales_date, PRODUCT_ID, NULL as user_id,  SALES_AMOUNT 
+FROM OFFLINE_SALE  
+where substr(sales_date,1,7) like '2022-03'
+order by sales_date asc, product_id asc, user_id asc;
+
+
