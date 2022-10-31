@@ -1,0 +1,55 @@
+-- DateTime에서 date로 형 변환
+SELECT animal_id, name, substr(datetime, 1, 10) as '날짜'
+from ANIMAL_INS
+order by animal_id ASC;
+
+-- 루시와 엘라 찾기
+SELECT animal_id, name, SEX_UPON_INTAKE
+from ANIMAL_INS 
+where name  in('Lucy','Ella','Pickle','Rogan', 'Sabrina', 'Mitty');
+
+-- 오랜 기간 보호한 동물
+SELECT i.ANIMAL_ID, i.NAME from ANIMAL_OUTS  o , ANIMAL_INS i 
+where o.ANIMAL_ID = i.ANIMAL_ID  
+order by o.datetime - i.datetime desc
+limit 2
+
+-- 조건별로 분류하여 주문상태 출력하기
+SELECT ORDER_ID,PRODUCT_ID,substr(OUT_DATE,1,10) OUT_DATE,
+case 
+    when OUT_DATE <= '2022-05-01'then '출고완료'
+    when out_date is null then '출고미정' 
+    else '출고대기'
+end as '출고여부'
+from FOOD_ORDER 
+order by ORDER_ID asc;
+
+
+-- 오랜 기간 보호한 동물1 
+SELECT i.NAME, i.DATETIME
+from ANIMAL_INS i
+left join ANIMAL_OUTS o
+on ( i.animal_id = o.animal_id)
+where o.animal_id is  null
+order by datetime asc
+limit 3;
+
+
+-- 있었는데요 없었습니다.
+SELECT i.ANIMAL_ID, i.NAME
+from ANIMAL_INS i
+left join ANIMAL_OUTS o
+on (i.ANIMAL_ID = o.ANIMAL_ID)
+where i.DATETIME > o.DATETIME
+order by i.DATETIME asc;
+
+-- 즐겨찾기가 가장 많은 식당 정보 출력하기
+SELECT i.FOOD_TYPE, REST_ID, REST_NAME, i.FAVORITES
+from rest_info i
+join (select FOOD_TYPE, max(FAVORITES) as 'FAVORITES' from rest_info
+     group by FOOD_TYPE order by FOOD_TYPE desc) o
+on(i.food_type = o.food_type and i.favorites = o.favorites)
+order by FOOD_TYPE desc;
+
+
+ 
