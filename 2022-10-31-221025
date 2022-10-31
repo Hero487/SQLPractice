@@ -1,0 +1,28 @@
+-- 헤비 유저가 소유한 장소
+SELECT ID,NAME,host_id
+FROM PLACES
+WHERE HOST_ID IN (
+    SELECT HOST_ID
+    FROM PLACES
+    GROUP BY HOST_ID
+    HAVING COUNT(HOST_ID)> 1
+)
+
+-- 보호소에서 중성화한 동물
+SELECT i.ANIMAL_ID, i.animal_type, i.name
+from ANIMAL_INS i,ANIMAL_OUTS o
+where i.ANIMAL_ID = o.ANIMAL_ID and i.SEX_UPON_INTAKE like '%Intact%' and (o.SEX_UPON_OUTCOME like '%Spayed%' or  o.SEX_UPON_OUTCOME like '%Neutered%') 
+order by i.ANIMAL_ID;
+
+-- 우유와 요거트가 담긴 장바구니
+SELECT a.cart_id 
+from CART_PRODUCTS  a, CART_PRODUCTS  b
+where a.CART_ID = b.CART_ID and a.NAME like 'Milk' and b.NAME like 'Yogurt'
+group by a.cart_id
+order by a.CART_ID asc;
+
+SELECT a.product_id, a.product_name, sum(a.price) as 'TOTAL_SALES'
+from FOOD_PRODUCT a, FOOD_ORDER  b 
+where a.product_id = b.product_id and substr(b.PRODUCE_DATE, 1, 7) like '2022-05'
+group by a.product_id
+order by TOTAL_SALES desc, a.product_id asc
