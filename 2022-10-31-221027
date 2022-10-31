@@ -1,0 +1,18 @@
+-- 그룹별 조건에 맞는 식당 목록 출력하기
+SELECT a.member_name, b.REVIEW_TEXT, substr(b.review_date, 1,10) as review_date
+from MEMBER_PROFILE a, REST_REVIEW b
+where a.member_id = b.member_id and a.member_id = (select member_id from rest_review group by member_id order by count(review_id) desc limit 1)
+order by REVIEW_DATE
+
+-- 년, 월, 성별 별 상품 구매 회원 수 구하기
+SELECT substr(b.sales_date, 1, 4) year, DATE_FORMAT(b.sales_date,"%m") month, a.gender,  count(distinct a.user_id) users
+from USER_INFO a, ONLINE_SALE b
+where a.user_id = b.user_id and a.gender is not null
+group by year, month, a.gender
+order by year asc, month asc, a.gender asc
+
+-- 취소되지 않은 진료 예약 조회하기
+select c.APNT_NO,	a.PT_NAME,	c.PT_NO,	b.MCDP_CD	, b.DR_NAME	,c.APNT_YMD
+from PATIENT a, DOCTOR b, APPOINTMENT c
+where substr(c.apnt_ymd, 1, 10) like '2022-04-13' and c.APNT_CNCL_YN like 'N'  and b.mcdp_cd = c.mcdp_cd  and  a.pt_no = c.pt_no and b.DR_ID = c.MDDR_ID
+order by c.APNT_YMD asc;	
